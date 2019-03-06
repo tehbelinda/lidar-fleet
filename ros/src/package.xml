@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>lidar_websocket</name>
+  <version>0.0.0</version>
+  <description>The ros lidar point cloud to websocket package</description>
+  <maintainer email="belzteh@gmail.com">tehbelinda</maintainer>
+  <license>TODO</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>std_msgs</exec_depend>
+</package>

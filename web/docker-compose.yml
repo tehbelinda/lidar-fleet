@@ -1,0 +1,8 @@
+version: '2'
+services:
+  point_cloud_server:
+    container_name: point_cloud_server
+    image: point_cloud_server
+    build: .
+    network_mode: host
+    restart: always

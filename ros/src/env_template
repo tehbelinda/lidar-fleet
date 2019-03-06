@@ -1,0 +1,4 @@
+HOST=localhost
+PORT=0000
+LIDAR_ID=foo
+LIDAR_TOPIC=/bar

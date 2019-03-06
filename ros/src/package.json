@@ -1,0 +1,17 @@
+{
+  "name": "lidar_websocket",
+  "version": "1.0.0",
+  "description": "",
+  "main": "scripts/lidar_client.js",
+  "scripts": {
+    "start": "node scripts/lidar_client.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^6.2.0",
+    "rosnodejs": "^3.0.0",
+    "ws": "^6.1.3"
+  }
+}
