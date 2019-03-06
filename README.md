@@ -17,7 +17,7 @@ Run: `docker-compose up`
 
 Go to `http://<host>:3002`
 
-### Dev without Docker
+### Run without Docker
 
 **Server**
 
@@ -31,6 +31,15 @@ npm run server
 ```bash
 cd web/app
 npm run build
+```
+
+### Dev
+
+**Browser**
+
+```bash
+cd web/app
+npm start
 ```
 
 ## Lidar
