@@ -1,0 +1,23 @@
+.side-menu .title {
+  padding: 1em;
+  border-bottom: solid 1px;
+  text-transform: capitalize;
+  font-size: 125%;
+  letter-spacing: 1.2;
+}
+
+.side-menu ul {
+  margin: 0;
+  padding: 0;
+}
+
+.side-menu ul li {
+  cursor: pointer;
+  list-style: none;
+  padding: 1em;
+  border-bottom: solid 1px;
+}
+
+.side-menu ul li.selected {
+  background-color: lightgreen;
+}

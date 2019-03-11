@@ -5,12 +5,14 @@
   "main": "index.jsx",
   "scripts": {
     "build": "webpack",
+    "build-dev": "webpack --mode development",
     "start": "webpack-dev-server --mode development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "classnames": "^2.2.6",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "three": "^0.102.1",

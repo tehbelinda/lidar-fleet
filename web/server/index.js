@@ -15,7 +15,7 @@ httpServer.listen(PORT, () => {
 });
 
 let lidarSockets = {};
-let displaySockets = [];
+let displaySockets = {};
 
 websocketServer.on('connection', (socket, req) => {
   console.log('Got connection on', req.url);
@@ -27,8 +27,16 @@ websocketServer.on('connection', (socket, req) => {
 
     // Re-broadcast latest point cloud data to client displays
     socket.on('message', (data) => {
-      for (let displaySocket of displaySockets) {
-        displaySocket.send(data);
+      if (!displaySockets[lidarId]) {
+        return;
+      }
+
+      for (let displaySocket of displaySockets[lidarId]) {
+        try {
+          displaySocket.send(data);
+        } catch(error) {
+          console.error(error);
+        }
       }
     });
 
@@ -37,14 +45,19 @@ websocketServer.on('connection', (socket, req) => {
       console.log('Removing lidar id', lidarId);
       delete lidarSockets[lidarId];
     });
-  } else {
-    const index = displaySockets.push(socket) - 1;
-    console.log('Attaching client display', index);
+  } else if (req.url.startsWith('/view')) {
+    // Keep track of which lidar was requested for viewing
+    const lidarId = req.url.replace('/view/', '');
+    if (!displaySockets[lidarId]) {
+      displaySockets[lidarId] = [];
+    }
+    const index = displaySockets[lidarId].push(socket) - 1;
+    console.log(`Attaching view ${index} for ${lidarId}`);
 
     // Remove display socket on disconnection
     socket.on('close', () => {
-      console.log('Removing client display', index);
-      displaySockets.splice(index, 1);
+      console.log(`Removing client display ${index} for ${lidarId}`);
+      displaySockets[lidarId].splice(index, 1);
     });
   }
 });
