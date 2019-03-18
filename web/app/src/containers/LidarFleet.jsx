@@ -10,25 +10,33 @@ export default class LidarFleet extends React.Component {
     super(props);
 
     this.state = {
-      itemId: this.props.itemId
+      itemId: this.props.itemId,
+      lidars: []
     };
 
     this.onItemClick = this.onItemClick.bind(this);
   }
 
   render() {
-    // TODO: Get available lidars from server
-    const items = [
-      {id: "foo"},
-      {id: "baz"},
-      {id: "bar"}
-    ];
     return (
       <div className="lidar-fleet">
-        <SideMenu items={items} handleClick={this.onItemClick} selectedId={this.state.itemId} />
+        <SideMenu items={this.state.lidars} handleClick={this.onItemClick} selectedId={this.state.itemId} />
         <PointCloudView lidarId={this.state.itemId} />
       </div>
     )
+  }
+
+  componentDidMount() {
+    const host = window.document.location.host.replace(/:.*/, '');
+    const port = process.env.PORT || 3002;
+    this.socket = new WebSocket('ws://' + host + ':' + port);
+    this.socket.onmessage = (e) => {
+      const msg = JSON.parse(e.data);
+      switch(msg.type) {
+        case 'lidars':
+          this.setState({lidars: msg.lidars});
+      }
+    };
   }
 
   onItemClick(e) {

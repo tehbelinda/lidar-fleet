@@ -14,8 +14,16 @@ httpServer.listen(PORT, () => {
   console.log('Server started on', PORT);
 });
 
-let lidarSockets = {};
-let displaySockets = {};
+const lidarSockets = {};
+const displaySockets = {};
+const infoSockets = [];
+
+const sendLidarInfo = (socket) => {
+  socket.send(JSON.stringify({
+    type: 'lidars',
+    lidars: Object.keys(lidarSockets)
+  }));
+};
 
 websocketServer.on('connection', (socket, req) => {
   console.log('Got connection on', req.url);
@@ -44,7 +52,16 @@ websocketServer.on('connection', (socket, req) => {
     socket.on('close', () => {
       console.log('Removing lidar id', lidarId);
       delete lidarSockets[lidarId];
+      // Updates clients about available lidars
+      for (let infoSocket of infoSockets) {
+        sendLidarInfo(infoSocket);
+      }
     });
+
+    // Updates clients about available lidars
+    for (let infoSocket of infoSockets) {
+      sendLidarInfo(infoSocket);
+    }
   } else if (req.url.startsWith('/view')) {
     // Keep track of which lidar was requested for viewing
     const lidarId = req.url.replace('/view/', '');
@@ -59,5 +76,17 @@ websocketServer.on('connection', (socket, req) => {
       console.log(`Removing client display ${index} for ${lidarId}`);
       displaySockets[lidarId].splice(index, 1);
     });
+  } else {
+    const index = infoSockets.push(socket) - 1;
+    console.log(`Attaching info ${index}`);
+
+    // Remove info socket on disconnection
+    socket.on('close', () => {
+      console.log(`Removing info ${index}`);
+      infoSockets.splice(index, 1);
+    });
+
+    // Alert new connections of available lidars
+    sendLidarInfo(socket);
   }
 });

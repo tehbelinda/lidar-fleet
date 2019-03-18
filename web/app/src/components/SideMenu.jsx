@@ -10,11 +10,11 @@ export default class SideMenu extends React.Component {
         <div className="title">LIDARS</div>
         <ul>
           {this.props.items.map(item => {
-            const selected = item.id == this.props.selectedId;
+            const selected = item == this.props.selectedId;
             const classNames = cx("item", { "selected": selected });
             return (
-              <li className={classNames} key={item.id} data-id={item.id} onClick={this.props.handleClick}>
-                {item.id}
+              <li className={classNames} key={item} data-id={item} onClick={this.props.handleClick}>
+                {item}
               </li>
             );
           })}
