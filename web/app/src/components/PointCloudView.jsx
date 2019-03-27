@@ -96,6 +96,9 @@ class PointCloudView extends React.Component {
       if (this.frameId) {
         cancelAnimationFrame(this.frameId);
       }
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+      }
       this.socket.close();
     }
 
@@ -133,7 +136,7 @@ class PointCloudView extends React.Component {
     };
 
     // This does the heavy lifting.
-    setInterval(() => {
+    this.intervalId = setInterval(() => {
       const buf = new Float32Array(pointData);
       // Reset index to 0 if the frame is too large
       if (index + buf.length >= MAX_LENGTH) {
