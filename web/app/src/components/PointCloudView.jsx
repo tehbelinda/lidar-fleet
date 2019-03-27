@@ -125,7 +125,7 @@ class PointCloudView extends React.Component {
     this.socket.onmessage = (e) => {
       // Always assign the latest buffer...
       // but only draw this new buffer at regular intervals.
-      // That way mewssage processing can happen as fast as
+      // That way message processing can happen as fast as
       // possible, and doesn't backup waiting on render.
       pointData = e.data;
     };
