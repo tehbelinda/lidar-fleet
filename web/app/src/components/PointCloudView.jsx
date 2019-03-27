@@ -120,10 +120,19 @@ class PointCloudView extends React.Component {
   connect() {
     this.connectToSocket();
 
-    // Offset for rotating through stored frames
-    let index = 0;
+    let index = 0; // Offset for rotating through stored frames
+    let pointData = null;
     this.socket.onmessage = (e) => {
-      const buf = new Float32Array(e.data);
+      // Always assign the latest buffer...
+      // but only draw this new buffer at regular intervals.
+      // That way mewssage processing can happen as fast as
+      // possible, and doesn't backup waiting on render.
+      pointData = e.data;
+    };
+
+    // This does the heavy lifting.
+    setInterval(() => {
+      const buf = new Float32Array(pointData);
       // Reset index to 0 if the frame is too large
       if (index + buf.length >= MAX_LENGTH) {
         index = 0;
@@ -131,7 +140,7 @@ class PointCloudView extends React.Component {
       this.geometry.attributes.position.set(buf, index);
       index += buf.length;
       this.geometry.attributes.position.needsUpdate = true;
-    };
+    }, 100);
 
     this.animate();
   }
