@@ -7,9 +7,10 @@ import * as OrbitControls from 'three-orbitcontrols';
 
 import "./pointCloudView.scss";
 
-const DELAY = 35; // Num frames to delay
-const MAX_POINTS = 5000 * DELAY;
-const MAX_LENGTH = MAX_POINTS * 3;
+const url = new URL(window.location.href);
+const DELAY = Math.max(1, url.searchParams.get('delay') || 1); // Num frames to delay, minimum 1 for frame itself
+const MAX_POINTS = url.searchParams.get('points') || 5000; // Max number of points per frame
+const MAX_LENGTH = MAX_POINTS * DELAY * 3;
 const POINT_SIZE = 0.01;
 
 // Shader for colour based on height
