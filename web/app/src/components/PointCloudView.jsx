@@ -99,7 +99,9 @@ class PointCloudView extends React.Component {
       this.socket.close();
     }
 
-    // TODO: Reset geometry
+    // Reset geometry on lidar change
+    this.geometry.attributes.position.array.fill(0, 0, MAX_LENGTH);
+    this.geometry.attributes.position.needsUpdate = true;
 
     this.connect();
   }
@@ -152,7 +154,6 @@ class PointCloudView extends React.Component {
     this.socket.binaryType = 'arraybuffer';
     this.socket.onopen = (e) => {
       console.log('socket open', this.props.lidarId);
-      // TODO: Clear out old points
     };
     this.socket.onerror = (e) => {
       console.log('socket errored', this.props.lidarId);
