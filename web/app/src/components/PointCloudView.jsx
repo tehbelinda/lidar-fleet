@@ -142,6 +142,7 @@ class PointCloudView extends React.Component {
     this.socket.binaryType = 'arraybuffer';
     this.socket.onopen = (e) => {
       console.log('socket open', this.props.lidarId);
+      // TODO: Clear out old points
     };
     this.socket.onerror = (e) => {
       console.log('socket errored', this.props.lidarId);
