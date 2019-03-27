@@ -124,11 +124,11 @@ class PointCloudView extends React.Component {
     let index = 0;
     this.socket.onmessage = (e) => {
       const buf = new Float32Array(e.data);
-      this.geometry.attributes.position.set(buf, index);
       index += buf.length;
       if (index >= MAX_LENGTH) {
         index = 0;
       }
+      this.geometry.attributes.position.set(buf, index);
       this.geometry.attributes.position.needsUpdate = true;
     };
 
