@@ -9,6 +9,10 @@ Visualiser for a fleet of lidars
 TODO: 
 - Expand to multiple point clouds using lidar id
 
+## General Setup
+
+Install [nodejs](https://github.com/nodesource/distributions/blob/master/README.md#debinstall)
+
 ## Web
 
 Build: `docker-compose build`
@@ -23,6 +27,7 @@ Go to `http://<host>:3002`
 
 ```bash
 cd web/server
+npm install
 npm run server
 ```
 
@@ -30,15 +35,14 @@ npm run server
 
 ```bash
 cd web/app
+npm install
 npm run build
 ```
 
-### Dev
-
-**Browser**
-
+For the dev version:
 ```bash
 cd web/app
+npm install
 npm start
 ```
 
@@ -57,7 +61,7 @@ source devel/setup.bash
 ```
 
 Using the env_template file as a guide, fill in the .env file for your environment, eg HOST, PORT, etc:
-```
+```bash
 cd src
 cp env_template .env
 vim .env
@@ -69,6 +73,11 @@ HOST=localhost
 PORT=3002
 LIDAR_ID=foo
 LIDAR_TOPIC=/livox/lidar
+```
+
+Still in the src folder, install dependencies
+```bash
+npm install
 ```
 
 To start the client: 
