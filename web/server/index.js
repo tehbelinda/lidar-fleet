@@ -19,6 +19,10 @@ const displaySockets = {};
 const infoSockets = [];
 
 const sendLidarInfo = (socket) => {
+  if (socket.readyState != WebSocket.OPEN) {
+    console.warn('Client not ready for lidar info', socket.readyState);
+    return;
+  }
   socket.send(JSON.stringify({
     type: 'lidars',
     lidars: Object.keys(lidarSockets)
