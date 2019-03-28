@@ -33,24 +33,32 @@ websocketServer.on('connection', (socket, req) => {
     console.log('Attaching lidar id', lidarId);
     lidarSockets[lidarId] = socket;
 
-    // Re-broadcast latest point cloud data to client displays
+    let pointData = null;
     socket.on('message', (data) => {
-      if (!displaySockets[lidarId]) {
+      // Just stash the message and be ready for the next one
+      pointData = data;
+    });
+
+    // Re-broadcast latest point cloud data to client displays at a regular interval
+    const intervalId = setInterval(() => {
+      if (!displaySockets[lidarId] || !pointData) {
         return;
       }
 
       for (let displaySocket of displaySockets[lidarId]) {
         try {
-          displaySocket.send(data);
+          displaySocket.send(pointData);
         } catch(error) {
           console.error(error);
         }
       }
-    });
+    }, 100);
 
     // Remove lidar socket on disconnection
     socket.on('close', () => {
       console.log('Removing lidar id', lidarId);
+      clearInterval(intervalId);
+      pointData = null;
       delete lidarSockets[lidarId];
       // Updates clients about available lidars
       for (let infoSocket of infoSockets) {

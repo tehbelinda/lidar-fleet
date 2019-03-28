@@ -12,6 +12,7 @@ const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 3002;
 const LIDAR_ID = process.env.LIDAR_ID || 'foo';
 const LIDAR_TOPIC = process.env.LIDAR_TOPIC || '/pointcloud';
+const PUBLISH_INTERVAL = process.env.PUBLISH_INTERVAL || 100;
 
 const RECONNECT_INTERVAL = 10 * 1000; // 10s
 let socket;
@@ -36,18 +37,26 @@ function connect() {
 connect();
 
 rosnodejs.initNode('/ros_websocket').then((rosNode) => {
-  console.log('Ros websocket node started'); 
+  console.log('Ros websocket node started');
+
+  // Just saving off the point cloud data, so we don't back up lifting to the cloud.
+  let pointMsg = null;
   rosNode.subscribe(LIDAR_TOPIC, sensor_msgs.PointCloud2, (msg) => {
-    if (!socket || socket.readyState != WebSocket.OPEN) {
+    pointMsg = msg;
+  });
+
+  // This does the cloud lifting at regular intervals.
+  const intervalId = setInterval(() => {
+    if (!pointMsg || !socket || socket.readyState != WebSocket.OPEN) {
       return;
     }
 
     // Convert to arraybuffer of points
-    const buf = msg.data;
-    const numPoints = msg.width;
+    const buf = pointMsg.data;
+    const numPoints = pointMsg.width;
     const positions = new Float32Array(numPoints * 3);
     const fields = {};
-    for (let field of msg.fields) {
+    for (let field of pointMsg.fields) {
       fields[field.name] = field;
     }
     const xOffset = fields.x.offset;
@@ -56,11 +65,11 @@ rosnodejs.initNode('/ros_websocket').then((rosNode) => {
     const scale = 1; // For scaling point dim space
     let byteOffset;
     for (let i = 0; i < numPoints; i++) {
-      byteOffset = i * msg.point_step;
+      byteOffset = i * pointMsg.point_step;
       positions[i * 3 + 0] = buf.readFloatLE(byteOffset + xOffset) * scale;
       positions[i * 3 + 1] = buf.readFloatLE(byteOffset + yOffset) * scale;
       positions[i * 3 + 2] = buf.readFloatLE(byteOffset + zOffset) * scale;
     }
     socket.send(positions);
-  });
+  }, PUBLISH_INTERVAL);
 });
