@@ -27,9 +27,7 @@ export default class LidarFleet extends React.Component {
   }
 
   componentDidMount() {
-    const host = window.document.location.host.replace(/:.*/, '');
-    const port = process.env.PORT || 3002;
-    this.socket = new WebSocket('ws://' + host + ':' + port);
+    this.socket = new WebSocket('ws://' + window.location.host + '/ws');
     this.socket.onmessage = (e) => {
       const msg = JSON.parse(e.data);
       switch(msg.type) {

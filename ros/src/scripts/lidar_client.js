@@ -18,7 +18,7 @@ let socket;
 function connect() {
   if (socket) return;
   console.log('Creating websocket to', HOST, PORT);
-  socket = new WebSocket('ws://' + HOST + ':' + PORT + '/lidar/' + LIDAR_ID);
+  socket = new WebSocket('ws://' + HOST + ':' + PORT + '/ws/lidar/' + LIDAR_ID);
   socket.on('open', () => {
     console.log('Connected to server as', LIDAR_ID);
   });

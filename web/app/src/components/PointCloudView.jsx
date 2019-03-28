@@ -151,9 +151,7 @@ class PointCloudView extends React.Component {
   }
 
   connectToSocket() {
-    const host = window.document.location.host.replace(/:.*/, '');
-    const port = process.env.PORT || 3002;
-    this.socket = new WebSocket('ws://' + host + ':' + port + '/view/' + this.props.lidarId);
+    this.socket = new WebSocket('ws://' + window.document.location.host + '/ws/view/' + this.props.lidarId);
     this.socket.binaryType = 'arraybuffer';
     this.socket.onopen = (e) => {
       console.log('socket open', this.props.lidarId);

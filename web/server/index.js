@@ -27,9 +27,9 @@ const sendLidarInfo = (socket) => {
 
 websocketServer.on('connection', (socket, req) => {
   console.log('Got connection on', req.url);
-  if (req.url.startsWith('/lidar')) {
+  if (req.url.startsWith('/ws/lidar')) {
     // Keep track of connected lidar
-    const lidarId = req.url.replace('/lidar/', '');
+    const lidarId = req.url.replace('/ws/lidar/', '');
     console.log('Attaching lidar id', lidarId);
     lidarSockets[lidarId] = socket;
 
@@ -62,9 +62,9 @@ websocketServer.on('connection', (socket, req) => {
     for (let infoSocket of infoSockets) {
       sendLidarInfo(infoSocket);
     }
-  } else if (req.url.startsWith('/view')) {
+  } else if (req.url.startsWith('/ws/view')) {
     // Keep track of which lidar was requested for viewing
-    const lidarId = req.url.replace('/view/', '');
+    const lidarId = req.url.replace('/ws/view/', '');
     if (!displaySockets[lidarId]) {
       displaySockets[lidarId] = [];
     }
@@ -76,7 +76,7 @@ websocketServer.on('connection', (socket, req) => {
       console.log(`Removing client display ${index} for ${lidarId}`);
       displaySockets[lidarId].splice(index, 1);
     });
-  } else {
+  } else if (req.url.startsWith('/ws')) {
     const index = infoSockets.push(socket) - 1;
     console.log(`Attaching info ${index}`);
 
