@@ -6,3 +6,5 @@ services:
     build: .
     network_mode: host
     restart: always
+    environment:
+      - PORT=3002
