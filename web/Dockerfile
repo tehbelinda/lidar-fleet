@@ -1,5 +1,27 @@
 FROM node:carbon
 
+RUN apt-get update
+RUN apt-get upgrade -y
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get install -y wget cmake build-essential libeigen3-dev libflann-dev \
+  libpcap0.8-dev libvtk6-dev libboost-all-dev
+ 
+RUN mkdir /pcl
+WORKDIR /pcl
+
+RUN wget https://github.com/PointCloudLibrary/pcl/archive/pcl-1.9.1.tar.gz
+RUN tar -xvzf pcl-1.9.1.tar.gz
+WORKDIR pcl-pcl-1.9.1
+WORKDIR build
+RUN cmake -DCMAKE_BUILD_TYPE=Release ..
+RUN make -j8
+RUN make -j8 install
+
+WORKDIR /
+RUN rm -rf pcl
+
 # Install dependencies
 WORKDIR /usr/src
 COPY app/package*.json ./app/
@@ -22,26 +44,5 @@ RUN npm run build
 # Start server
 WORKDIR /usr/src/server
 EXPOSE 3002
+
 CMD [ "npm", "start" ]
-
-RUN apt-get update
-RUN apt-get upgrade -y
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get install -y wget cmake build-essential libeigen3-dev libflann-dev \
-  libpcap0.8-dev libvtk6-dev libboost-all-dev
- 
-RUN mkdir /pcl
-WORKDIR /pcl
-
-RUN wget https://github.com/PointCloudLibrary/pcl/archive/pcl-1.9.1.tar.gz
-RUN tar -xvzf pcl-1.9.1.tar.gz
-WORKDIR pcl-pcl-1.9.1
-WORKDIR build
-RUN cmake -DCMAKE_BUILD_TYPE=Release ..
-RUN make -j8
-RUN make -j8 install
-
-WORKDIR /
-RUN rm -rf pcl
