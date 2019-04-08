@@ -9,10 +9,12 @@ void processPointCloud(const Napi::CallbackInfo& info)
   }
   Napi::Buffer<float> originalData = info[0].As<Napi::Buffer<float>>();
   float* data = originalData.Data();
+
+  // Insert C++ code here, for example:
   // Set x axis to 0 to show modification
-  for (int i = 0; i < originalData.Length(); i += 3) {
-    data[i] = 0;
-  }
+  // for (unsigned int i = 0; i < originalData.Length(); i += 3) {
+  //  data[i] = 0;
+  //}
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
