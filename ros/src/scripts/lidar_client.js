@@ -36,7 +36,7 @@ function connect() {
 };
 connect();
 
-rosnodejs.initNode('/ros_websocket').then((rosNode) => {
+rosnodejs.initNode('/ros_websocket', {anonymous: true}).then((rosNode) => {
   console.log('Ros websocket node started');
 
   // Just saving off the point cloud data, so we don't back up lifting to the cloud.
