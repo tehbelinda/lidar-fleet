@@ -63,12 +63,13 @@ rosnodejs.initNode('/ros_websocket', {anonymous: true}).then((rosNode) => {
     const yOffset = fields.y.offset;
     const zOffset = fields.z.offset;
     const scale = 1; // For scaling point dim space
+    const readFLoat = pointMsg.is_bigendian ? buf.readFloatBE.bind(buf) : buf.readFloatLE.bind(buf);
     let byteOffset;
     for (let i = 0; i < numPoints; i++) {
       byteOffset = i * pointMsg.point_step;
-      positions[i * 3 + 0] = buf.readFloatLE(byteOffset + xOffset) * scale;
-      positions[i * 3 + 1] = buf.readFloatLE(byteOffset + yOffset) * scale;
-      positions[i * 3 + 2] = buf.readFloatLE(byteOffset + zOffset) * scale;
+      positions[i * 3 + 0] = readFLoat(byteOffset + xOffset) * scale;
+      positions[i * 3 + 1] = readFLoat(byteOffset + yOffset) * scale;
+      positions[i * 3 + 2] = readFLoat(byteOffset + zOffset) * scale;
     }
     socket.send(positions);
   }, PUBLISH_INTERVAL);
