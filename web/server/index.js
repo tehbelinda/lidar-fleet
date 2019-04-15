@@ -2,6 +2,8 @@ const http = require('http');
 const express = require('express');
 const WebSocket = require('ws');
 
+const { processPointCloud } = require('./build/Release/addon');
+
 const PORT = process.env.PORT || 3002;
 
 const app = express();
@@ -48,6 +50,8 @@ websocketServer.on('connection', (socket, req) => {
       if (!displaySockets[lidarId] || !pointData) {
         return;
       }
+
+      processPointCloud(pointData);
 
       for (let displaySocket of displaySockets[lidarId]) {
         try {
