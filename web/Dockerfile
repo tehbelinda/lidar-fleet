@@ -19,7 +19,8 @@ COPY server/. server/.
 WORKDIR /usr/src/app
 RUN npm run build
 
-# Start server
+# Build and start server
 WORKDIR /usr/src/server
+RUN npm run compile
 EXPOSE 3002
 CMD [ "npm", "start" ]
