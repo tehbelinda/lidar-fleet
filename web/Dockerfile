@@ -5,7 +5,7 @@ RUN apt-get upgrade -y
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get install -y wget cmake build-essential libeigen3-dev libflann-dev \
+RUN apt-get install -y wget cmake build-essential vim libeigen3-dev libflann-dev \
   libpcap0.8-dev libvtk6-dev libboost-all-dev
 
 RUN wget -qO - https://deb.nodesource.com/setup_11.x | bash - \
