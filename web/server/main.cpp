@@ -1,5 +1,8 @@
 #include <iostream>
 #include <napi.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_types.h>
+#include <pcl/point_cloud.h>
 
 void processPointCloud(const Napi::CallbackInfo& info)
 {
@@ -10,11 +13,12 @@ void processPointCloud(const Napi::CallbackInfo& info)
   Napi::Buffer<float> originalData = info[0].As<Napi::Buffer<float>>();
   float* data = originalData.Data();
 
-  // Insert C++ code here, for example:
-  // Set x axis to 0 to show modification
-  // for (unsigned int i = 0; i < originalData.Length(); i += 3) {
-  //  data[i] = 0;
-  //}
+  pcl::PointCloud<pcl::PointXYZ> cloud;
+  for (unsigned int i = 0; i < originalData.Length(); i += 3) {
+    cloud.push_back(pcl::PointXYZ(data[i], data[i + 1], data[i + 2]));
+  }
+
+  pcl::io::savePCDFileASCII("tempcloud.pcd", cloud);
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
