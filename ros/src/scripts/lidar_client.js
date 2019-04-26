@@ -53,7 +53,7 @@ rosnodejs.initNode('/ros_websocket', {anonymous: true}).then((rosNode) => {
 
     // Convert to arraybuffer of points
     const buf = pointMsg.data;
-    const numPoints = pointMsg.width;
+    const numPoints = (pointMsg.row_step * pointMsg.height) / pointMsg.point_step;
     const positions = new Float32Array(numPoints * 3);
     const fields = {};
     for (let field of pointMsg.fields) {
