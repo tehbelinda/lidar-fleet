@@ -1,5 +1,6 @@
 #include <iostream>
 #include <napi.h>
+#include <opencv2/opencv.hpp>
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
@@ -19,6 +20,9 @@ void processPointCloud(const Napi::CallbackInfo& info)
   }
 
   pcl::io::savePCDFileASCII("tempcloud.pcd", cloud);
+
+  cv::Mat image = cv::Mat(cloud.height, cloud.width, CV_8UC3);
+  cv::imwrite("tempimage.png", image);
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
