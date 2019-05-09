@@ -1,12 +1,12 @@
 FROM ubuntu:18.04
 
-RUN apt-get update
-RUN apt-get upgrade -y
-
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get install -y wget cmake build-essential vim libeigen3-dev libflann-dev \
-  libpcap0.8-dev libvtk6-dev libboost-all-dev
+RUN apt-get update \
+ && apt-get upgrade -y \
+ && apt-get install -y wget cmake build-essential vim libeigen3-dev libflann-dev \
+    libpcap0.8-dev libvtk6-dev libboost-all-dev \
+    unzip libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
 
 RUN wget -qO - https://deb.nodesource.com/setup_11.x | bash - \
  && apt-get -y install nodejs
@@ -24,6 +24,14 @@ RUN make -j8 install
 
 WORKDIR /
 RUN rm -rf pcl
+
+# Install OpenCV
+WORKDIR /tmp
+RUN wget https://github.com/opencv/opencv/archive/3.4.6.zip && unzip 3.4.6.zip && rm 3.4.6.zip
+RUN mkdir opencv-3.4.6/build && cd opencv-3.4.6/build \
+  && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local .. \
+  && make -j8 \
+  && make install
 
 # Install dependencies
 WORKDIR /usr/src
