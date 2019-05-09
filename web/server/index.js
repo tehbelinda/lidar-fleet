@@ -51,7 +51,7 @@ websocketServer.on('connection', (socket, req) => {
         return;
       }
 
-      processPointCloud(pointData);
+      processPointCloud(pointData, lidarId);
 
       if (!displaySockets[lidarId]) {
         return;
