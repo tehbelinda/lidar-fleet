@@ -47,11 +47,15 @@ websocketServer.on('connection', (socket, req) => {
 
     // Re-broadcast latest point cloud data to client displays at a regular interval
     const intervalId = setInterval(() => {
-      if (!displaySockets[lidarId] || !pointData) {
+      if (!pointData) {
         return;
       }
 
       processPointCloud(pointData);
+
+      if (!displaySockets[lidarId]) {
+        return;
+      }
 
       for (let displaySocket of displaySockets[lidarId]) {
         try {
