@@ -51,7 +51,8 @@ websocketServer.on('connection', (socket, req) => {
         return;
       }
 
-      processPointCloud(pointData);
+      const retBuf = processPointCloud(pointData);
+      console.log(retBuf, retBuf[0]);
 
       if (!displaySockets[lidarId]) {
         return;
