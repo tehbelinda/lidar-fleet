@@ -18,10 +18,21 @@
     "include_dirs": [
       "/usr/include/eigen3",
       "/usr/local/include/pcl-1.9",
+      "/opt/ros/melodic/include",
       "<!@(node -p \"require('node-addon-api').include\")"
     ],
     "libraries": [
       "-Wl,-rpath,/usr/local/lib",
+      "-Wl,-rpath,/opt/ros/melodic/lib",
+      "-L/opt/ros/melodic/lib",
+      "-lroscpp",
+      "-lrosconsole",
+      "-lrostime",
+      "-lroscpp_serialization",
+      "-lboost_system",
+      "-lboost_thread",
+      "-pthread",
+      "-lactionlib",
       "-lpcl_common",
       "-lpcl_features",
       "-lpcl_filters",

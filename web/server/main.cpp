@@ -1,13 +1,19 @@
 #include <iostream>
 #include <napi.h>
 #include <pcl/io/pcd_io.h>
+#include <pcl/conversions.h>
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
 #include <unordered_map>
 
-std::unordered_map<std::string, int> pointcloud_counts;
-std::unordered_map<std::string, pcl::PointCloud<pcl::PointXYZ>::Ptr> clouds;
 
+#include "ros/ros.h"
+#include <pcl_conversions/pcl_conversions.h>
+#include "sensor_msgs/PointCloud2.h"
+
+std::unordered_map<std::string, ros::Publisher> pointcloud_publishers;
+std::unordered_map<std::string, pcl::PointCloud<pcl::PointXYZ>::Ptr> clouds;
+std::shared_ptr<ros::NodeHandle> nodehandle;
 
 void processPointCloud(const Napi::CallbackInfo& info )
 {
@@ -18,11 +24,12 @@ void processPointCloud(const Napi::CallbackInfo& info )
   std::string lidarname = static_cast<std::string>(lidarId);
   float* data = originalData.Data();
 
-  const auto& itr = pointcloud_counts.find(lidarname);
-  if (itr == pointcloud_counts.end()) {
-      pointcloud_counts.emplace(lidarname, 0);
+  const auto& itr = pointcloud_publishers.find(lidarname);
+  if (itr == pointcloud_publishers.end()) {
+      pointcloud_publishers.emplace(lidarname,
+        nodehandle->advertise<sensor_msgs::PointCloud2>(lidarname, 3));
   }
-  pointcloud_counts[lidarname]++;
+
 
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
   for (unsigned int i = 0; i < originalData.Length(); i += 3) {
@@ -30,11 +37,21 @@ void processPointCloud(const Napi::CallbackInfo& info )
   }
 
   clouds.emplace(lidarname, cloud);
+  sensor_msgs::PointCloud2 s_cloud;
+  pcl::toROSMsg(*cloud, s_cloud);
+
+  pointcloud_publishers[lidarname].publish(s_cloud);
 
   pcl::io::savePCDFileASCII("tempcloud.pcd", *cloud);
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
+  const ros::M_string topic_remappings;
+
+  ros::init(topic_remappings, "pointcloud_cpp");
+
+  nodehandle = std::make_shared<ros::NodeHandle>();
+
   exports.Set(
     "processPointCloud", Napi::Function::New(env, processPointCloud)
   );
@@ -42,3 +59,4 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 }
 
 NODE_API_MODULE(addon, Init)
+

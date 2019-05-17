@@ -1,12 +1,11 @@
-FROM ubuntu:18.04
+FROM ros:latest
 
 RUN apt-get update
-RUN apt-get upgrade -y
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get install -y wget cmake build-essential vim libeigen3-dev libflann-dev \
-  libpcap0.8-dev libvtk6-dev libboost-all-dev less
+RUN apt-get upgrade -y && apt-get install -y wget cmake build-essential vim libeigen3-dev libflann-dev \
+  libpcap0.8-dev libvtk6-dev libboost-all-dev ros-melodic-pcl-conversions less && rm -rf /var/lib/apt/lists/*
 
 RUN wget -qO - https://deb.nodesource.com/setup_11.x | bash - \
  && apt-get -y install nodejs
@@ -49,4 +48,8 @@ WORKDIR /usr/src/server
 RUN npm run compile
 EXPOSE 3002
 
-CMD [ "npm", "start" ]
+RUN source /opt/ros/melodic/setup.bash && roscore >> /tmp/roscorelog &
+COPY docker_entrypoint.sh .
+
+#CMD [ "npm", "start" ]
+CMD ./docker_entrypoint.sh
